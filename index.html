@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <link rel="stylesheet" href="./lib/css/styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Diabetes Planner and Tracker</a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+      </div>
+    </div>
+  
+  </nav>
+
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-7">
+          <h1 class="display-4" id="patient_name"></h1>
+          <h2><span class="badge badge-secondary" id="diabetes">..</span></h2>
+          <hr class="my-4">
+          <div class="row">
+            <div class="col-sm-4">
+              <strong>Gender:</strong>
+              <p class="lead" id="gender">..</p>
+              <strong>Age:</strong>
+              <p class="lead" id="age">..</p>
+            </div>
+            <div class="col-sm-4">
+              <strong>Height:</strong>
+              <p class="lead" id="height">..</p>
+              <strong>Weight:</strong>
+              <p class="lead" id="weight">..</p>
+            </div>
+            <div class="col-sm-4">
+              <strong>Basal Metabolic Rate: </strong>
+              <p class="lead" id="bmr">..</p>
+              <strong>Total Daily Energy Expenditure: </strong>
+              <p class="lead" id="tdee">..</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4">
+          <form class="form-group" id="act_goal"></form>
+          <br>
+            <strong for="goal">Goal:</strong>
+            <select id="goal" name="goal">
+              <option value="0">Maintain Weight</option>
+              <option value=".95">Slowly Lose Weight</option>
+              <option value="1.05">Slowly Gain Muscle</option>
+            </select>
+            <br>
+            <br>
+            <br>
+            <strong for="ActivityLevel">Activity Level:</strong>
+            <select id="ActivityLevel" name="ActivityLevel">
+              <option value="1.2" id="Sedentary">Sedentary</option>
+              <option value="1.375" id="Lightly Active">Lightly Active</option>
+              <option value="1.55" id="Moderately Active">Moderately Active</option>
+              <option value="1.725" id="Very Active">Very Active</option>
+              <option value="1.9" id="Extremely Active">Extremely Active</option>
+            </select>
+          <br>
+          <br>
+          <div class="input-group">
+            <strong for="Goal Weight">Goal Weight:  </strong>
+            <input type="text" class="form-control" id="goal_weight">
+            <div class="input-group-append">
+              <span class="input-group-text">Kg</span>
+            </div>
+          </div>
+          <br>
+          <input type="button" class="btn btn-secondary btn-lg btn-block" onclick="updateGoal_Activity()" value="Submit">
+          <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="notesModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="notesModalLabel">Latest Patient Weight Note</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" id="note">
+                  ..
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary-sm" data-toggle="modal" data-target="#notesModal">
+            View Notes
+          </button>
+          <button type="button" class="btn btn-primary-sm" data-toggle="modal" data-target="#saveNoteModal" id="openNewNote">Save Diet Plan Note</button>
+          <div class="modal fade" id="saveNoteModal" tabindex="-1" role="dialog" aria-labelledby="saveNoteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="esaveNoteModalLabel">New Diet Observation</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                    <div class="form-group">
+                      <label for="message-text" class="col-form-label">Diet Plan Note:</label>
+                      <textarea class="form-control" id="saveNoteModaltext"></textarea>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="savenote" onclick="">Save Diet Note</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <h4>Daily Calories and Macros to Achieve Goal</h4>
+      <h6>Values Change Based on Your Goal and Activity Level</h6>
+      <div class="row">
+        <div class="col-6">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body d-flex flex-column align-items-start">
+              <h5 class="card-title"> Total Calories </h5>
+              <div class="card-text" id="totalCalories">..</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body d-flex flex-column align-items-start">
+              <h5 class="card-title" data-toggle="tooltip" data-placement="top">Protein</h5>
+              <div class="card-text" id="protein">..</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body d-flex flex-column align-items-start">
+              <h5 class="card-title" data-toggle="tooltip" data-placement="top">Carbs</h5>
+              <div class="card-text" id="carb">..</div>
+            </div>
+          </div>
+        </div>
+          <div class="col-6">
+            <div class="card" style="width: 18rem;">
+              <div class="card-body d-flex flex-column align-items-start">
+                <h5 class="card-title" data-toggle="tooltip" data-placement="top">Fats</h5>
+                <div class="card-text" id="fat">..</div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-6">
+      <canvas id="macro_chart"></canvas>
+    </div>
+    </div>
+    <br>
+    <br>
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      Added weight and glucose Observations can take up to 5 minutes to show on the graph since the endpoint is a Test FHIR server. If you do not see the observation value added to the graph, try refreshing the page a few times or relaunch the application via SMART launch.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <h6></h6>
+    <br>
+    <br>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <canvas id="weight_chart"></canvas>
+        </div>
+        <div class="col-6">
+          <h4>Weight Tracker and Timeline</h4>
+          <h6>Use this to see historial weight and time it will take to reach weight goal</h6>
+          <strong>Weeks till Goal Reached:</strong>
+          <p class="lead" id="time">..</p>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary" type="button" onclick="addWeight()">Add Weight Observation</button>
+            </div>
+            <input type="text" class="form-control" aria-label="" aria-describedby="basic-addon1" id="new_weight">
+            <div class="input-group-append">
+              <span class="input-group-text">Kg</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <h4>Glucose Tracker and Timeline</h4>
+          <h6>Use this to see historial glucose levels</h6>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary" type="button" onclick="addGlucose()">Add Glucose Observation</button>
+            </div>
+            <input type="text" class="form-control" aria-label="" aria-describedby="basic-addon1" id="new_glucose">
+            <div class="input-group-append">
+              <span class="input-group-text">mg/dL</span>
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="col-6">
+          <canvas id="glucose_chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+
+  <script type="text/javascript">
+    $('#savenote').click(function() {
+      $('#saveNoteModal').modal('hide');
+    });
+  </script>
+
+  <script src='./lib/js/fhir-client.js'></script>
+  <script src="./lib/js/get-data.js"></script>
+
+  <!-- uncomment below script and comment above script to switch for easy local testing -->
+  <!-- <script src="./lib/js/get-data-test.js"></script> -->
+</body>
+
+</html>
